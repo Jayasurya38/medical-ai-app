@@ -47,6 +47,9 @@ const ReportDetail = () => {
     }
   }
 
+  const whoGuidance = report.guidanceResult || analysis?.whoGuidance || '';
+  const whoEvidence = report.guidanceEvidence?.length ? report.guidanceEvidence : (analysis?.whoEvidence || []);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 transition-colors duration-200">
       <Link to="/" className="inline-flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition">
@@ -150,6 +153,28 @@ const ReportDetail = () => {
                   </div>
                 )}
               </section>
+
+              {/* WHO Guideline Check */}
+              {whoGuidance && (
+                <section>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-6 w-1 bg-amber-500 rounded-full" />
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">WHO Guideline Check</h2>
+                  </div>
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 p-5 rounded-lg text-amber-900 dark:text-amber-200 leading-relaxed shadow-sm">
+                    <p className="whitespace-pre-wrap">{whoGuidance}</p>
+                  </div>
+                  {whoEvidence.length > 0 && (
+                    <ul className="mt-3 space-y-2">
+                      {whoEvidence.slice(0, 3).map((item, idx) => (
+                        <li key={idx} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              )}
 
               {/* Doctor Questions */}
               {analysis.doctorQuestions && analysis.doctorQuestions.length > 0 && (

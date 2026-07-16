@@ -33,6 +33,17 @@ const reportSchema = new mongoose.Schema({
     normalRange: String,
     status: String
   }],
+  guidanceResult: {
+    type: String,
+    default: ""
+  },
+  guidanceEvidence: [{
+    type: String
+  }],
+  issueSummary: {
+    type: String,
+    default: ""
+  },
   status: {
     type: String,
     enum: ["uploaded", "analyzing", "analyzed"],

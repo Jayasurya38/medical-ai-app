@@ -8,6 +8,37 @@ import { protect } from "../middleware/auth.js"
 
 const router = express.Router()
 
+const fastApiUrl = process.env.FASTAPI_URL || "http://127.0.0.1:8000"
+
+async function analyzeWithWhoGuidelines(documentText) {
+  try {
+    const response = await fetch(`${fastApiUrl}/analyze-report`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        document_text: documentText,
+        question: "Identify likely health issues from this document and explain the relevant WHO guidance."
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`FastAPI returned ${response.status}`)
+    }
+
+    const data = await response.json()
+    return {
+      answer: data.answer || "",
+      evidence: data.evidence || []
+    }
+  } catch (err) {
+    console.warn("WHO-guideline analysis unavailable:", err.message)
+    return {
+      answer: "",
+      evidence: []
+    }
+  }
+}
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     const uploadDir = "uploads/"
@@ -111,11 +142,20 @@ Report text: ${pdfText}`
     }
 
     const analysis = JSON.parse(jsonMatch[0])
+    const whoCheck = await analyzeWithWhoGuidelines(pdfText)
+    const enrichedAnalysis = {
+      ...analysis,
+      whoGuidance: whoCheck.answer || "WHO-guideline verification was not available.",
+      whoEvidence: whoCheck.evidence.slice(0, 3)
+    }
 
     await Report.findByIdAndUpdate(report._id, {
-      analysis:       JSON.stringify(analysis),
+      analysis:       JSON.stringify(enrichedAnalysis),
       abnormalValues: analysis.abnormalValues || [],
       rawText:        pdfText,
+      guidanceResult: whoCheck.answer || "",
+      guidanceEvidence: whoCheck.evidence.slice(0, 3),
+      issueSummary: whoCheck.answer ? whoCheck.answer.split("\n")[0] : "",
       status:         "analyzed"
     })
 

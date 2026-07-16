@@ -4,7 +4,7 @@ import api from '../api/axios';
 
 const ChatPanel = ({ reportId }) => {
   const [messages, setMessages] = useState([
-    { role: 'ai', content: 'Hello! I am your medical AI assistant. You can ask me any specific questions regarding this report.' }
+    { role: 'ai', content: 'Hello! I can answer questions about your report and cross-check key findings against WHO-guideline-based guidance.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

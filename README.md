@@ -42,6 +42,22 @@ User → React Frontend → Express API → Groq (Llama 3.3 70B)
 
 ## 🚀 Getting Started
 
+### FastAPI RAG Service
+
+A FastAPI-based RAG endpoint is included under [server/fastapi_app](server/fastapi_app). It can be started separately for document ingestion and retrieval-based QA.
+
+```bash
+cd server
+chmod +x run_fastapi.sh
+./run_fastapi.sh
+```
+
+The service exposes:
+- GET /health
+- POST /ingest for uploading a text file and building a simple retrieval index
+- POST /query for question answering against the indexed report context
+
+
 ### Prerequisites
 
 - Node.js v18+
